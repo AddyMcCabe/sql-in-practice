@@ -30,7 +30,8 @@ module.exports = {
     approveAppointment: (req, res) => {
         let {apptId} = req.body
     
-        sequelize.query(`
+        sequelize.query(`update cc_appointments a set a.approved = true
+        where appt_id = ${apptId}
         
         insert into cc_emp_appts (emp_id, appt_id)
         values (${nextEmp}, ${apptId}),
@@ -52,7 +53,7 @@ module.exports = {
     getPendingAppointments: (req, res) => {
         sequelize.query(`select * from cc_appointments a 
          where a.approved = false
-         order by date`)
+         order by date desc`)
          .then(dbRes => res.status(200).send(dbRes[0]))
          .catch(err => console.log(err))
     },
@@ -71,6 +72,10 @@ module.exports = {
     },
 
     completeAppointment: (req, res) => {
-        sequelize.query(``)
+        let {apptId} = req.body
+        sequelize.query(`update cc_appointments a set a.completed = true
+        where a.appt_id = ${apptId} `)
+        .then(dbRes => res.status(200).send(dbRes[0]))
+        .catch(err => console.log(err))
     }
 }
